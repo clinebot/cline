@@ -109,6 +109,24 @@
           "when": "view == claude-dev.SidebarProvider"
         }
       ]
+    },
+    "configuration": {
+      "title": "Claude Dev",
+      "properties": {
+        "claudeDev.alwaysAllowReadOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, Claude will automatically read files and view directories without requiring you to click the Allow button."
+        },
+        "claudeDev.puppeteerLaunchArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional launch arguments for Puppeteer. These will be merged with the default arguments used by the extension."
+        }
+      }
     }
   },
   "scripts": {
