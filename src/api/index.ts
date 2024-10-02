@@ -3,6 +3,7 @@ import { ApiConfiguration, ModelInfo } from "../shared/api"
 import { AnthropicHandler } from "./providers/anthropic"
 import { AwsBedrockHandler } from "./providers/bedrock"
 import { OpenRouterHandler } from "./providers/openrouter"
+import { SapAiCoreHandler } from "./providers/sapaicore"
 import { VertexHandler } from "./providers/vertex"
 import { OpenAiHandler } from "./providers/openai"
 import { OllamaHandler } from "./providers/ollama"
@@ -43,6 +44,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 			return new GeminiHandler(options)
 		case "openai-native":
 			return new OpenAiNativeHandler(options)
+		case "sapaicore":
+			return new SapAiCoreHandler(options)
 		default:
 			return new AnthropicHandler(options)
 	}

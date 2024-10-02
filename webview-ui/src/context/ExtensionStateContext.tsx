@@ -45,6 +45,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 						config.ollamaModelId,
 						config.geminiApiKey,
 						config.openAiNativeApiKey,
+						config.sapAiCoreClientId,
 				  ].some((key) => key !== undefined)
 				: false
 			setShowWelcome(!hasKey)

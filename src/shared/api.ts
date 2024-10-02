@@ -7,6 +7,7 @@ export type ApiProvider =
 	| "ollama"
 	| "gemini"
 	| "openai-native"
+	| "sapaicore"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -27,6 +28,11 @@ export interface ApiHandlerOptions {
 	geminiApiKey?: string
 	openAiNativeApiKey?: string
 	azureApiVersion?: string
+	sapAiCoreClientId?: string
+	sapAiCoreClientSecret?: string
+	sapAiResourceGroup?: string
+	sapAiCoreTokenUrl?: string
+	sapAiCoreBaseUrl?: string
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -45,6 +51,8 @@ export interface ModelInfo {
 	cacheWritesPrice?: number
 	cacheReadsPrice?: number
 }
+
+export type ApiModelId = AnthropicModelId | OpenRouterModelId | BedrockModelId | VertexModelId | SapAiCoreModelId
 
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
@@ -404,3 +412,25 @@ export const openAiNativeModels = {
 // https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-deprecation
 // https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
 export const azureOpenAiDefaultApiVersion = "2024-08-01-preview"
+
+// SAP AI Core
+export type SapAiCoreModelId = keyof typeof sapAiCoreModels
+export const sapAiCoreDefaultModelId: SapAiCoreModelId = "anthropic--claude-3.5-sonnet"
+export const sapAiCoreModels = {
+	"anthropic--claude-3.5-sonnet": {
+		maxTokens: 8192,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 3.0,
+		outputPrice: 15.0,
+	},
+	"anthropic--claude-3-sonnet": {
+		maxTokens: 4096,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 3.0,
+		outputPrice: 15.0,
+	},
+} as const satisfies Record<string, ModelInfo>

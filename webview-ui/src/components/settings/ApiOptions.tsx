@@ -26,6 +26,8 @@ import {
 	openRouterModels,
 	vertexDefaultModelId,
 	vertexModels,
+	sapAiCoreDefaultModelId,
+	sapAiCoreModels,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -76,7 +78,7 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage }: ApiOptionsProps) => {
 	VSCodeDropdown has an open bug where dynamically rendered options don't auto select the provided value prop. You can see this for yourself by comparing  it with normal select/option elements, which work as expected.
 	https://github.com/microsoft/vscode-webview-ui-toolkit/issues/433
 
-	In our case, when the user switches between providers, we recalculate the selectedModelId depending on the provider, the default model for that provider, and a modelId that the user may have selected. Unfortunately, the VSCodeDropdown component wouldn't select this calculated value, and would default to the first "Select a model..." option instead, which makes it seem like the model was cleared out when it wasn't. 
+	In our case, when the user switches between providers, we recalculate the selectedModelId depending on the provider, the default model for that provider, and a modelId that the user may have selected. Unfortunately, the VSCodeDropdown component wouldn't select this calculated value, and would default to the first "Select a model..." option instead, which makes it seem like the model was cleared out when it wasn't.
 
 	As a workaround, we create separate instances of the dropdown for each provider, and then conditionally render the one that matches the current provider.
 	*/
@@ -123,6 +125,7 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage }: ApiOptionsProps) => {
 					<VSCodeOption value="openai-native">OpenAI</VSCodeOption>
 					<VSCodeOption value="openai">OpenAI Compatible</VSCodeOption>
 					<VSCodeOption value="ollama">Ollama</VSCodeOption>
+					<VSCodeOption value="sapaicore">SAP AI Core</VSCodeOption>
 				</VSCodeDropdown>
 			</div>
 
@@ -518,6 +521,59 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage }: ApiOptionsProps) => {
 				</div>
 			)}
 
+			{selectedProvider === "sapaicore" && (
+				<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+					<VSCodeTextField
+						value={apiConfiguration?.sapAiCoreClientId || ""}
+						style={{ width: "100%" }}
+						onInput={handleInputChange("sapAiCoreClientId")}
+						placeholder="Enter AI Core Client Id...">
+						<span style={{ fontWeight: 500 }}>AI Core Client Id</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.sapAiCoreClientSecret || ""}
+						style={{ width: "100%" }}
+						onInput={handleInputChange("sapAiCoreClientSecret")}
+						placeholder="Enter AI Core Client Secret...">
+						<span style={{ fontWeight: 500 }}>AI Core Client Secret</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.sapAiCoreBaseUrl || ""}
+						style={{ width: "100%" }}
+						onInput={handleInputChange("sapAiCoreBaseUrl")}
+						placeholder="Enter AI Core Base URL...">
+						<span style={{ fontWeight: 500 }}>AI Core Base URL</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.sapAiCoreTokenUrl || ""}
+						style={{ width: "100%" }}
+						onInput={handleInputChange("sapAiCoreTokenUrl")}
+						placeholder="Enter AI Core Auth URL...">
+						<span style={{ fontWeight: 500 }}>AI Core Auth URL</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.sapAiResourceGroup || ""}
+						style={{ width: "100%" }}
+						onInput={handleInputChange("sapAiResourceGroup")}
+						placeholder="Enter AI Core Resource Group...">
+						<span style={{ fontWeight: 500 }}>AI Core Resource Group</span>
+					</VSCodeTextField>
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: "5px",
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						These credentials are stored locally and only used to make API requests from this extension.
+						<VSCodeLink
+							href="https://help.sap.com/docs/sap-ai-core/sap-ai-core-service-guide/access-sap-ai-core-via-api"
+							style={{ display: "inline" }}>
+							You can find more information about SAP AI Core API access here.
+						</VSCodeLink>
+					</p>
+				</div>
+			)}
+
 			{apiErrorMessage && (
 				<p
 					style={{
@@ -541,6 +597,7 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage }: ApiOptionsProps) => {
 						{selectedProvider === "vertex" && createDropdown(vertexModels)}
 						{selectedProvider === "gemini" && createDropdown(geminiModels)}
 						{selectedProvider === "openai-native" && createDropdown(openAiNativeModels)}
+						{selectedProvider === "sapaicore" && createDropdown(sapAiCoreModels)}
 					</div>
 
 					<ModelInfoView selectedModelId={selectedModelId} modelInfo={selectedModelInfo} />
@@ -712,6 +769,8 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				selectedModelId: apiConfiguration?.ollamaModelId ?? "",
 				selectedModelInfo: openAiModelInfoSaneDefaults,
 			}
+		case "sapaicore":
+			return getProviderData(sapAiCoreModels, sapAiCoreDefaultModelId)
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
 	}
